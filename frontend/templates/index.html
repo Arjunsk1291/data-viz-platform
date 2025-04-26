@@ -20,3 +20,77 @@
     </script>
 </body>
 </html>
+
+<!-- Add this AFTER your NASA content but BEFORE closing </body> tag -->
+
+<!-- ========== WEATHER SECTION ========== -->
+<div class="section">
+    <h2>Weather Explorer</h2>
+    <div class="input-group">
+        <input type="text" id="cityInput" placeholder="Enter city (e.g. London)">
+        <button onclick="loadWeather()" class="btn">Get Weather</button>
+    </div>
+    <div id="weatherChart" class="chart-container"></div>
+</div>
+
+<!-- ========== STOCKS SECTION ========== -->
+<div class="section">
+    <h2>Stock Analyzer</h2>
+    <div class="input-group">
+        <input type="text" id="stockInput" placeholder="Enter symbol (e.g. MSFT)">
+        <button onclick="loadStock()" class="btn">Get Stock</button>
+    </div>
+    <div id="stockChart" class="chart-container"></div>
+</div>
+
+<!-- Add Plotly JS -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<script>
+// ========== WEATHER VISUALIZATION ==========
+async function loadWeather() {
+    const city = document.getElementById('cityInput').value;
+    try {
+        const response = await fetch(`/api/weather/${city}`);
+        const data = await response.json();
+        
+        Plotly.newPlot('weatherChart', [{
+            values: [data.temp, data.humidity],
+            labels: ['Temperature (°C)', 'Humidity (%)'],
+            type: 'pie',
+            marker: { colors: ['#FFA500', '#00BFFF'] }
+        }], {
+            title: `${city} Weather Breakdown`
+        });
+    } catch (error) {
+        alert('Failed to load weather data');
+    }
+}
+
+// ========== STOCK VISUALIZATION ==========
+async function loadStock() {
+    const symbol = document.getElementById('stockInput').value.toUpperCase();
+    try {
+        const response = await fetch(`/api/stocks/${symbol}`);
+        const data = await response.json();
+        
+        const dates = Object.keys(data.historical).reverse().slice(0, 30); // Last 30 days
+        const closes = dates.map(date => 
+            parseFloat(data.historical[date]['4. close'])
+        );
+
+        Plotly.newPlot('stockChart', [{
+            x: dates,
+            y: closes,
+            type: 'scatter',
+            line: { color: '#32CD32' }
+        }], {
+            title: `${symbol} Stock Price (30 Days)`,
+            xaxis: { title: 'Date' },
+            yaxis: { title: 'Closing Price (USD)' }
+        });
+    } catch (error) {
+        alert('Failed to load stock data');
+    }
+}
+</script>
