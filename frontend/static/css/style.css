@@ -1,21 +1,60 @@
-.chart-container {
-    height: 400px;
-    margin: 20px 0;
+/* style.css */
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #4f46e5;
+    --glass-bg: rgba(255, 255, 255, 0.05);
 }
 
-.input-group {
-    margin: 15px 0;
+body.dark-theme {
+    background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
+    color: #ffffff;
+    min-height: 100vh;
 }
 
-.btn {
-    background: #4CAF50;
-    color: white;
+.navbar {
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-control {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white !important;
+}
+
+.btn-success {
+    background: var(--primary-color);
     border: none;
-    padding: 8px 15px;
-    border-radius: 4px;
-    cursor: pointer;
+    transition: all 0.3s;
 }
 
-.btn:hover {
-    background: #45a049;
+.btn-success:hover {
+    background: var(--secondary-color);
+    transform: scale(1.05);
+}
+
+#weatherChart, #stockChart {
+    height: 400px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    padding: 15px;
 }

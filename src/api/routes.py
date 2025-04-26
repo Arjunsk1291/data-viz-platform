@@ -1,30 +1,26 @@
-from flask import Blueprint, jsonify
-from ..core.data_fetcher import NasaFetcher 
-from ..core.weather_fetcher import WeatherFetcher
-from ..core.stock_fetcher import StockFetcher
+from flask import Blueprint, jsonify  # Add Blueprint here
+from src.extensions import limiter, cache
+from src.core.data_fetcher import NasaFetcher
+from src.core.weather_fetcher import WeatherFetcher
+from src.core.stock_fetcher import StockFetcher
 
-api = Blueprint('api', __name__)
+api = Blueprint('api', __name__) 
 
+# Static route first
 @api.route('/nasa/apod')
-
-@api.route('/weather/<city>')
-@limiter.limit("10/minute") 
-
-def get_weather(city):
-    if not city.isalpha():
-        return jsonify({'error': 'Invalid city name'}), 400
-    fetcher = WeatherFetcher()
-    return jsonify(fetcher.get_weather(city))
-
-
+@limiter.limit("10/minute")
 def nasa_apod():
-    fetcher = NasaFetcher()
-    data = fetcher.get_astronomy_picture()
-    return jsonify(data)
+    return jsonify(NasaFetcher().get_astronomy_picture())
 
-@api.route('/stocks/<symbol>')
+# Parameterized routes after
+@api.route('/weather/<string:city>')
+@limiter.limit("15/minute")
+def get_weather(city: str):
+    if not city.replace(" ", "").isalpha():
+        return jsonify({"error": "Invalid city name"}), 400
+    return jsonify(WeatherFetcher().get_weather(city))
+
+@api.route('/stocks/<string:symbol>')
 @cache.cached(timeout=300)
-def get_stock(symbol):
-    fetcher = StockFetcher()
-    return jsonify(fetcher.get_stock_data(symbol))
-
+def get_stock(symbol: str):
+    return jsonify(StockFetcher().get_stock_data(symbol))
