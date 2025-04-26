@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Space Pics</title>
+</head>
+<body>
+    <h1>NASA Astronomy Picture of the Day</h1>
+    <div id="content"></div>
+
+    <script>
+        fetch('/api/nasa/apod')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('content').innerHTML = `
+                    <h2>${data.title}</h2>
+                    <img src="${data.url}" width="500">
+                    <p>${data.explanation}</p>
+                `;
+            });
+    </script>
+</body>
+</html>
